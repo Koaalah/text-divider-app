@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Separar Texto com Blocos Coloridos</title>
+    <style>
+        .block {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .color1 {
+            background-color: #f0f8ff; /* Azul claro */
+        }
+        .color2 {
+            background-color: #ffe4e1; /* Rosa claro */
+        }
+        /* Estilizando a textarea para ocupar 100% da largura */
+        textarea {
+            width: 100%;
+            box-sizing: border-box; /* Inclui padding e bordas na largura */
+        }
+    </style>
+</head>
+<body>
+    <h1>Separar Texto em Blocos Coloridos de X Caracteres</h1>
+
+    <textarea id="inputText" rows="5" placeholder="Digite seu texto aqui..."></textarea><br><br>
+
+    <label for="charCount">Número de caracteres por parte (X): </label>
+    <input type="number" id="charCount" min="1"><br><br>
+
+    <button onclick="separarTexto()">Separar Texto</button>
+
+    <h2>Resultado:</h2>
+    <div id="result"></div>
+
+    <script>
+        function separarTexto() {
+            const text = document.getElementById('inputText').value;
+            const charCount = parseInt(document.getElementById('charCount').value);
+
+            if (!text || !charCount || charCount <= 0) {
+                alert("Por favor, insira um texto válido e um número de caracteres maior que 0.");
+                return;
+            }
+
+            let resultado = '';
+            let blockIndex = 0; // Índice para alternar as cores
+            let start = 0; // Posição inicial para o corte
+            const totalLength = text.length;
+
+            while (start < totalLength) {
+                // Pega o próximo pedaço de texto de tamanho máximo definido pelo usuário
+                let end = start + charCount;
+
+                // Se a posição de fim for além do comprimento total, ajusta o fim
+                if (end >= totalLength) {
+                    end = totalLength;
+                } else {
+                    // Procura o ponto final mais próximo antes do limite para não cortar parágrafos
+                    const lastPeriod = text.lastIndexOf('.', end);
+                    if (lastPeriod > start) {
+                        end = lastPeriod + 1; // Inclui o ponto final no bloco
+                    }
+                }
+
+                // Adiciona o bloco ao resultado, com a cor alternada
+                const blockText = text.slice(start, end).trim();
+                resultado += `<div class="block ${blockIndex % 2 === 0 ? 'color1' : 'color2'}">` + blockText + '</div>';
+                blockIndex++;
+
+                // Atualiza a posição inicial para a próxima iteração
+                start = end;
+            }
+
+            document.getElementById('result').innerHTML = resultado;
+        }
+    </script>
+</body>
+</html>
